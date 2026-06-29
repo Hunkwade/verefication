@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Raskbind X — Employee Verification</title>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/icon.png">
+  <style>
+    :root {
+      --bg: #fafafa;
+      --panel: #ffffff;
+      --panel2: #f4f5f6;
+      --line: #e3e5e8;
+      --orange: #FF6B00;
+      --orange-deep: #d65600;
+      --text: #15171a;
+      --muted: #6b7280;
+      --danger: #d92d3f;
+      --success: #1a8a52;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ---------- TOP BAR ---------- */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 24px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      background: var(--orange);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: .85rem;
+      color: #fff;
+      border-radius: 6px;
+    }
+
+    .topbar-left .brand-name {
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: -.2px;
+    }
+
+    .topbar-left .brand-name span {
+      color: var(--orange);
+    }
+
+    .topbar-right {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .status-dot {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .74rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .status-dot i {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+      display: inline-block;
+    }
+
+    /* ---------- HERO ---------- */
+    .hero {
+      padding: 26px 24px 20px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .hero-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      margin: 0 0 6px;
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -.3px;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: .9rem;
+      max-width: 620px;
+      line-height: 1.55;
+    }
+
+    .hero-tags {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--orange-deep);
+      background: #fff1e6;
+      border: 1px solid #ffd9b8;
+      padding: 5px 10px;
+      border-radius: 5px;
+      letter-spacing: .2px;
+    }
+
+    /* ---------- MAIN ---------- */
+    .main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px 24px 50px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1.25fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel2);
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .panel-head h2 b {
+      color: var(--orange);
+    }
+
+    .panel-body {
+      padding: 18px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+    }
+
+    .tab-btn {
+      padding: 6px 13px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: .74rem;
+      cursor: pointer;
+      transition: .15s;
+    }
+
+    .tab-btn.active {
+      background: var(--orange);
+      color: #fff;
+      border-color: var(--orange);
+    }
+
+    .panel-scan-area {
+      display: block;
+    }
+
+    .panel-manual-area {
+      display: none;
+    }
+
+    #reader-wrap {
+      position: relative;
+      border-radius: 7px;
+      overflow: hidden;
+      background: #000;
+      border: 1px solid var(--line);
+    }
+
+    #reader {
+      width: 100%;
+    }
+
+    #reader video {
+      width: 100% !important;
+      display: block;
+    }
+
+    .scan-flash {
+      position: absolute;
+      inset: 0;
+      background: rgba(26, 138, 82, .32);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.6rem;
+      color: #fff;
+    }
+
+    .scan-flash.show {
+      opacity: 1;
+    }
+
+    .corner {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border: 2.5px solid var(--orange);
+      opacity: .9;
+      pointer-events: none;
+      border-radius: 2px;
+    }
+
+    .corner.tl {
+      top: 8px;
+      left: 8px;
+      border-right: none;
+      border-bottom: none;
+    }
+
+    .corner.tr {
+      top: 8px;
+      right: 8px;
+      border-left: none;
+      border-bottom: none;
+    }
+
+    .corner.bl {
+      bottom: 8px;
+      left: 8px;
+      border-right: none;
+      border-top: none;
+    }
+
+    .corner.br {
+      bottom: 8px;
+      right: 8px;
+      border-left: none;
+      border-top: none;
+    }
+
+    .scan-hint {
+      color: var(--muted);
+      font-size: .8rem;
+      margin: 12px 0 0;
+      line-height: 1.55;
+    }
+
+    .scan-hint b {
+      color: var(--orange-deep);
+    }
+
+    .id-form {
+      display: flex;
+      gap: 6px;
+    }
+
+    .id-form input {
+      flex: 1;
+      min-width: 0;
+      padding: 11px 13px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      font-size: .92rem;
+      outline: none;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .id-form input::placeholder {
+      color: #9aa0a8;
+    }
+
+    .id-form input:focus {
+      border-color: var(--orange);
+    }
+
+    .id-form button {
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 0 20px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: .88rem;
+      transition: .15s;
+      flex: none;
+    }
+
+    .id-form button:hover {
+      background: var(--orange-deep);
+    }
+
+    .id-form button:active {
+      transform: scale(.97);
+    }
+
+    /* ---------- RESULT ---------- */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 54px 20px;
+      color: var(--muted);
+      text-align: center;
+      gap: 10px;
+    }
+
+    .empty-state .ic {
+      font-size: 2.2rem;
+      opacity: .45;
+    }
+
+    .empty-state p {
+      margin: 0;
+      font-size: .86rem;
+      max-width: 280px;
+      line-height: 1.55;
+    }
+
+    .error-msg {
+      color: var(--danger);
+      background: #fdecee;
+      border: 1px solid #f7c7cd;
+      padding: 11px 13px;
+      border-radius: 7px;
+      font-size: .86rem;
+      display: none;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .error-msg.show {
+      display: block;
+      animation: fadein .25s ease;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 54px 20px;
+      color: var(--muted);
+      font-size: .86rem;
+    }
+
+    .spinner {
+      width: 22px;
+      height: 22px;
+      border: 2.5px solid var(--line);
+      border-top-color: var(--orange);
+      border-radius: 50%;
+      margin: 0 auto 12px;
+      animation: spin .7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .result {
+      display: none;
+    }
+
+    .result.show {
+      display: block;
+      animation: fadein .3s ease;
+    }
+
+    @keyframes fadein {
+      from {
+        opacity: 0;
+        transform: translateY(6px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .verified-strip {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: #e9f7ef;
+      color: var(--success);
+      border: 1px solid #b9e8cb;
+      font-size: .78rem;
+      font-weight: 700;
+      padding: 8px 13px;
+      border-radius: 7px;
+      margin-bottom: 16px;
+      letter-spacing: .1px;
+    }
+
+    .verified-strip.fail {
+      background: #fdecee;
+      color: var(--danger);
+      border-color: #f7c7cd;
+    }
+
+    .emp-header {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .emp-photo {
+      width: 76px;
+      height: 76px;
+      border-radius: 9px;
+      object-fit: cover;
+      flex: none;
+      border: 1px solid var(--line);
+      background: #f4f5f6;
+    }
+
+    .emp-name {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: -.2px;
+    }
+
+    .emp-id {
+      color: var(--orange-deep);
+      font-size: .78rem;
+      margin: 2px 0 0;
+      font-weight: 600;
+    }
+
+    .emp-role {
+      color: var(--muted);
+      font-size: .86rem;
+      margin: 4px 0 0;
+    }
+
+    .badge {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: .7rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 5px;
+      background: #e9f7ef;
+      color: var(--success);
+      letter-spacing: .2px;
+    }
+
+    .badge.inactive {
+      background: #fdecee;
+      color: var(--danger);
+    }
+
+    .section-label {
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--muted);
+      margin: 18px 0 9px;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+
+    .field {
+      background: #fcfcfd;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 10px 12px;
+      min-width: 0;
+    }
+
+    .field label {
+      display: block;
+      font-size: .66rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .3px;
+      margin-bottom: 3px;
+      font-weight: 600;
+    }
+
+    .field span {
+      font-size: .92rem;
+      font-weight: 600;
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    .secure-toggle {
+      margin-top: 18px;
+      border-top: 1px dashed var(--line);
+      padding-top: 14px;
+    }
+
+    .secure-toggle summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--orange-deep);
+      font-size: .85rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .secure-toggle summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .key-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .key-row input {
+      flex: 1;
+      min-width: 0;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      font-size: .88rem;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .key-row button {
+      background: var(--text);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 0 15px;
+      cursor: pointer;
+      font-weight: 700;
+      flex: none;
+      font-size: .84rem;
+    }
+
+    .secure-box {
+      margin-top: 12px;
+      background: #fff8f0;
+      border: 1px solid #ffe3c2;
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .secure-box .field {
+      background: #fff;
+    }
+
+    #keyError {
+      color: var(--danger);
+      font-size: .8rem;
+      display: none;
+      margin: 8px 0 0;
+      font-weight: 600;
+    }
+
+    /* ---------- ABOUT ---------- */
+    .about {
+      margin-top: 18px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 22px;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .about-col h3 {
+      font-size: .74rem;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      color: var(--orange-deep);
+      margin: 0 0 8px;
+      font-weight: 700;
+    }
+
+    .about-col p,
+    .about-col li {
+      font-size: .85rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .about-col ul {
+      margin: 0;
+      padding-left: 16px;
+    }
+
+    .about-col a {
+      color: var(--orange-deep);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .about-col a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      text-align: center;
+      color: #a3a8ae;
+      font-size: .74rem;
+      padding: 20px 24px 30px;
+      border-top: 1px solid var(--line);
+      margin-top: 24px;
+      font-weight: 600;
+    }
+
+    footer .brand-foot {
+      color: var(--orange-deep);
+      font-weight: 800;
+    }
+
+    @media (max-width:880px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .about-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+    }
+
+    @media (max-width:480px) {
+      .topbar {
+        padding: 12px 16px;
+      }
+
+      .hero {
+        padding: 20px 16px 16px;
+      }
+
+      .main {
+        padding: 18px 16px 40px;
+      }
+
+      .hero h1 {
+        font-size: 1.25rem;
+      }
+
+      .field-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="logo-mark">RX</div>
+      <div class="brand-name">Raskbind<span>X</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="status-dot"><i></i>System Online</div>
+      <div class="status-dot" id="clock">--:--:--</div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-inner">
+      <h1>Employee Verification System</h1>
+      <p>Scan an employee ID card or enter an Employee ID to instantly verify Raskbind X personnel. Sensitive records
+        remain restricted to authorized company staff only.</p>
+      <div class="hero-tags">
+        <span class="tag">LIVE CAMERA SCAN</span>
+        <span class="tag">MANUAL ID LOOKUP</span>
+        <span class="tag">ROLE-BASED ACCESS</span>
+        <span class="tag">GOOGLE SHEETS BACKED</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <script>
+      const API_URL = "https://script.google.com/macros/s/AKfycbyeykw9JnRmUOpwIofwOWzJgSjxqz0mHyU32qc5O1bvKhusIZMC2Wk_9jErLzS0K3dJaA/exec";
+    </script>
+
+    <div class="grid">
+
+      <!-- LEFT: SCANNER -->
+      <div class="panel">
+        <div class="panel-head">
+          <h2><b>01</b> · Scan or Lookup</h2>
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="scan">Scan</button>
+            <button class="tab-btn" data-tab="manual">ID</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="panel-scan-area" id="panel-scan">
+            <div id="reader-wrap">
+              <div id="reader"></div>
+              <div class="corner tl"></div>
+              <div class="corner tr"></div>
+              <div class="corner bl"></div>
+              <div class="corner br"></div>
+              <div class="scan-flash" id="scanFlash">✓</div>
+            </div>
+            <p class="scan-hint">Hold the QR code steady inside the frame.<br><b>A beep confirms a successful scan.</b>
+            </p>
+          </div>
+          <div class="panel-manual-area" id="panel-manual">
+            <form class="id-form" id="idForm">
+              <input type="text" id="idInput" placeholder="e.g. RBX-CEO-0001" autocomplete="off">
+              <button type="submit">Find</button>
+            </form>
+            <p class="scan-hint">Type the Employee ID printed on the ID card.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: RESULT -->
+      <div class="panel">
+        <div class="panel-head">
+          <h2><b>02</b> · Employee Record</h2>
+        </div>
+        <div class="panel-body">
+
+          <div class="error-msg" id="errorMsg"></div>
+
+          <div class="loading" id="loadingMsg" style="display:none;">
+            <div class="spinner"></div>
+            Fetching employee record…
+          </div>
+
+          <div class="empty-state" id="emptyState">
+            <div class="ic">🆔</div>
+            <p>No record loaded yet. Scan a QR code on the left, or enter an Employee ID, to verify a Raskbind X
+              employee.</p>
+          </div>
+
+          <div class="result" id="resultCard">
+            <div class="verified-strip" id="verifiedStrip">✓ Verified — Raskbind X Employee</div>
+
+            <div class="emp-header">
+              <img class="emp-photo" id="empPhoto" src="" alt="Photo">
+              <div>
+                <p class="emp-name" id="empName">—</p>
+                <p class="emp-id" id="empIdLine">—</p>
+                <p class="emp-role" id="empRole">—</p>
+                <span class="badge" id="empStatus">Active</span>
+              </div>
+            </div>
+
+            <p class="section-label">Employee Details</p>
+            <div class="field-grid" id="publicFields"></div>
+
+            <details class="secure-toggle">
+              <summary>🔐 Company Staff Access — Secure Data</summary>
+              <div class="key-row">
+                <input type="password" id="adminKey" placeholder="Company key">
+                <button id="unlockBtn">Unlock</button>
+              </div>
+              <div class="secure-box field-grid" id="secureFields" style="display:none;"></div>
+              <p id="keyError"></p>
+            </details>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ABOUT RASKBIND X -->
+    <div class="about">
+      <div class="about-grid">
+        <div class="about-col">
+          <h3>Raskbind X</h3>
+          <p>A tech services &amp; consultancy company delivering web development, engineering delivery, AI/automation
+            systems, and technical advisory — based in Jaipur, Rajasthan, India.</p>
+        </div>
+        <div class="about-col">
+          <h3>What We Do</h3>
+          <ul>
+            <li>Web &amp; product engineering</li>
+            <li>AI &amp; automation systems</li>
+            <li>Technical advisory</li>
+            <li>Internal tooling &amp; infra</li>
+          </ul>
+        </div>
+        <div class="about-col">
+          <h3>Verify / Contact</h3>
+          <p>Lost or suspicious ID card? Contact HR/Admin immediately.<br>
+            <a href="https://raskbind.com" target="_blank">raskbind.com</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <span class="brand-foot">RASKBIND X</span> · Internal Employee Verification Tool · Authorized Use Only
+  </footer>
+
+  <script>
+    // ---------- Clock ----------
+    function tickClock() {
+      const el = document.getElementById("clock");
+      if (el) el.textContent = new Date().toLocaleTimeString();
+    }
+    tickClock(); setInterval(tickClock, 1000);
+
+    // ---------- Beep ----------
+    let audioCtx;
+    function playBeep(success = true) {
+      try {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.type = "sine";
+        osc.frequency.value = success ? 880 : 300;
+        gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.25, audioCtx.currentTime + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + (success ? 0.18 : 0.3));
+        osc.start(); osc.stop(audioCtx.currentTime + (success ? 0.2 : 0.32));
+        if (success) {
+          setTimeout(() => {
+            const o2 = audioCtx.createOscillator();
+            const g2 = audioCtx.createGain();
+            o2.connect(g2); g2.connect(audioCtx.destination);
+            o2.type = "sine"; o2.frequency.value = 1180;
+            g2.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+            g2.gain.exponentialRampToValueAtTime(0.22, audioCtx.currentTime + 0.01);
+            g2.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.15);
+            o2.start(); o2.stop(audioCtx.currentTime + 0.16);
+          }, 130);
+        }
+      } catch (e) { }
+    }
+
+    // ---------- Tabs ----------
+    const tabs = document.querySelectorAll(".tab-btn");
+    const panels = { scan: document.getElementById("panel-scan"), manual: document.getElementById("panel-manual") };
+    tabs.forEach(btn => {
+      btn.addEventListener("click", () => {
+        tabs.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        panels.scan.style.display = btn.dataset.tab === "scan" ? "block" : "none";
+        panels.manual.style.display = btn.dataset.tab === "manual" ? "block" : "none";
+        if (btn.dataset.tab === "manual") {
+          if (scannerRunning) html5QrCode.stop().then(() => scannerRunning = false).catch(() => { });
+        } else {
+          startScanner();
+        }
+      });
+    });
+
+    // ---------- QR Scanner ----------
+    const html5QrCode = new Html5Qrcode("reader");
+    let scannerRunning = false;
+    let lastScannedId = null;
+    let lastScanTime = 0;
+
+    function startScanner() {
+      if (scannerRunning) return;
+      Html5Qrcode.getCameras().then(cameras => {
+        if (!cameras || !cameras.length) {
+          showError("No camera found on this device. Use the ID tab instead.");
+          return;
+        }
+        html5QrCode.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: 220 },
+          (decodedText) => {
+            let id = decodedText.trim();
+            const urlMatch = id.match(/id=([^&]+)/i);
+            if (urlMatch) id = decodeURIComponent(urlMatch[1]);
+
+            const now = Date.now();
+            if (id === lastScannedId && now - lastScanTime < 3000) return;
+            lastScannedId = id;
+            lastScanTime = now;
+
+            flashScan();
+            playBeep(true);
+            fetchEmployee(id);
+          },
+          () => { }
+        ).then(() => scannerRunning = true).catch(err => showError("Camera error: " + err));
+      }).catch(() => showError("Camera permission denied or unavailable. Use the ID tab instead."));
+    }
+    startScanner();
+
+    function flashScan() {
+      const flash = document.getElementById("scanFlash");
+      flash.classList.add("show");
+      setTimeout(() => flash.classList.remove("show"), 350);
+    }
+
+    // ---------- Manual entry ----------
+    document.getElementById("idForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const id = document.getElementById("idInput").value.trim();
+      if (id) fetchEmployee(id);
+    });
+
+    // ---------- Fetch + render ----------
+    let lastFetchedId = null;
+
+    // Fields we never want shown as a generic tile — either shown elsewhere already,
+    // or are internal helper columns (like QR image formulas) not meant for display.
+    const HIDDEN_FIELD_KEYS = ["Name", "Photo", "Status", "EmployeeID", "QRLink", "QRCode", "QR"];
+
+    function fetchEmployee(id) {
+      hideError();
+      document.getElementById("emptyState").style.display = "none";
+      document.getElementById("resultCard").classList.remove("show");
+      document.getElementById("loadingMsg").style.display = "block";
+      lastFetchedId = id;
+
+      fetch(`${API_URL}?id=${encodeURIComponent(id)}`)
+        .then(r => r.json())
+        .then(data => {
+          document.getElementById("loadingMsg").style.display = "none";
+          if (!data.success) {
+            playBeep(false);
+            document.getElementById("emptyState").style.display = "flex";
+            showError(data.message || "Employee not found.");
+            return;
+          }
+          renderEmployee(data.data);
+        })
+        .catch(() => {
+          document.getElementById("loadingMsg").style.display = "none";
+          document.getElementById("emptyState").style.display = "flex";
+          playBeep(false);
+          showError("Could not reach the server. Check your internet connection.");
+        });
+    }
+
+    function renderEmployee(emp) {
+      document.getElementById("empPhoto").src = emp.Photo || ("https://placehold.co/76x76/FF6B00/fff?text=" + encodeURIComponent(emp.Name ? emp.Name[0] : "?"));
+      document.getElementById("empName").textContent = emp.Name || "Unknown";
+      document.getElementById("empIdLine").textContent = emp.EmployeeID || "";
+      document.getElementById("empRole").textContent = [emp.Designation, emp.Department].filter(Boolean).join(" · ");
+
+      const statusEl = document.getElementById("empStatus");
+      const status = (emp.Status || "Active");
+      statusEl.textContent = status;
+      statusEl.className = "badge" + (status.toLowerCase() !== "active" ? " inactive" : "");
+
+      const strip = document.getElementById("verifiedStrip");
+      if (status.toLowerCase() === "active" || !emp.Status) {
+        strip.textContent = "✓ Verified — Raskbind X Employee";
+        strip.className = "verified-strip";
+      } else {
+        strip.textContent = "⚠ Record found — Status: " + status;
+        strip.className = "verified-strip fail";
+      }
+
+      // Build the visible field grid: Designation + Department always shown explicitly first,
+      // then any other public columns, skipping the ones already shown elsewhere or junk/object values.
+      const grid = document.getElementById("publicFields");
+      grid.innerHTML = "";
+
+      const priorityOrder = ["Designation", "Department"];
+      priorityOrder.forEach(key => {
+        if (emp[key]) grid.innerHTML += fieldHtml(prettyLabel(key), emp[key]);
+      });
+
+      Object.keys(emp).forEach(key => {
+        if (priorityOrder.includes(key)) return;
+        if (HIDDEN_FIELD_KEYS.includes(key)) return;
+        const val = emp[key];
+        if (!val) return;
+        if (typeof val === "object") return; // skip non-text values (e.g. broken QR-image formula results)
+        if (String(val).trim().toLowerCase() === "[object object]") return;
+        grid.innerHTML += fieldHtml(prettyLabel(key), val);
+      });
+
+      document.getElementById("secureFields").style.display = "none";
+      document.getElementById("secureFields").innerHTML = "";
+      document.getElementById("adminKey").value = "";
+      document.getElementById("keyError").style.display = "none";
+
+      document.getElementById("resultCard").classList.add("show");
+    }
+
+    function fieldHtml(label, value) {
+      return `<div class="field"><label>${label}</label><span>${escapeHtml(String(value))}</span></div>`;
+    }
+    function prettyLabel(key) {
+      return key.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase()).trim();
+    }
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    document.getElementById("unlockBtn").addEventListener("click", () => {
+      const key = document.getElementById("adminKey").value.trim();
+      if (!lastFetchedId || !key) return;
+      fetch(`${API_URL}?id=${encodeURIComponent(lastFetchedId)}&key=${encodeURIComponent(key)}`)
+        .then(r => r.json())
+        .then(data => {
+          const keyErr = document.getElementById("keyError");
+          if (data.secure && data.secureData) {
+            const box = document.getElementById("secureFields");
+            box.innerHTML = Object.entries(data.secureData)
+              .filter(([k, v]) => v && typeof v !== "object")
+              .map(([k, v]) => fieldHtml(prettyLabel(k), v)).join("");
+            box.style.display = "grid";
+            keyErr.style.display = "none";
+          } else {
+            keyErr.textContent = data.secureKeyError || "Invalid key.";
+            keyErr.style.display = "block";
+          }
+        })
+        .catch(() => {
+          const keyErr = document.getElementById("keyError");
+          keyErr.textContent = "Could not verify key — check connection.";
+          keyErr.style.display = "block";
+        });
+    });
+
+    function showError(msg) {
+      const el = document.getElementById("errorMsg");
+      el.textContent = msg;
+      el.classList.add("show");
+    }
+    function hideError() {
+      document.getElementById("errorMsg").classList.remove("show");
+    }
+  </script>
+
+</body>
+
+</html>
